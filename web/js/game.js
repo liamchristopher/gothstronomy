@@ -82,7 +82,26 @@ export class Game {
     if (this.player.x === 0 && this.player.y === 0) {
       this.player.x = this.player.tx = this.arenaCx;
       this.player.y = this.player.ty = this.arenaCy;
+    } else {
+      // A resize can shrink the arena out from under an in-progress run;
+      // pull the player back inside the new bounds instead of leaving it
+      // stranded outside the visible circle.
+      const pos = this._clampToArena(this.player.x, this.player.y);
+      this.player.x = pos.x;
+      this.player.y = pos.y;
+      const target = this._clampToArena(this.player.tx, this.player.ty);
+      this.player.tx = target.x;
+      this.player.ty = target.y;
     }
+  }
+
+  _clampToArena(x, y) {
+    const dx = x - this.arenaCx;
+    const dy = y - this.arenaCy;
+    const d = Math.hypot(dx, dy);
+    if (d <= this.arenaR || d === 0) return { x, y };
+    const scale = this.arenaR / d;
+    return { x: this.arenaCx + dx * scale, y: this.arenaCy + dy * scale };
   }
 
   _seedStars() {

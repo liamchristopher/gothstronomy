@@ -89,6 +89,31 @@ uncovered — run it after editing `build_db.py`'s data.
   or missing names, and every `colors`/`happiness`/`tarot_mapping` value drawn from a small, fixed
   vocabulary — see §2.1's invariant.
 
+### 2.3 The merged database (`build_db_merged.py` -> `gothstronomy_merged.db`)
+
+Every other `.db` in this repo is self-contained; this one exists specifically to join them.
+`gothstronomy_detailed.db`'s `constellations` table and `rider_waite_3nf-lower.sqlite`'s full
+tarot schema were always joinable in principle -- every `tarot_mapping` string is exactly a
+`cards.name` -- but nothing on disk expressed that, so it had to be done by hand each time. The
+build script:
+
+1. `ATTACH`es both source files and copies `constellations` from `src_detailed` and all twelve
+   Rider-Waite tables (`suits` through `card_images`, BLOBs included) from `src_rw` verbatim --
+   same `CREATE TABLE` SQL, same rows, read straight from `sqlite_master`.
+2. Adds `constellations.tarot_card_id INTEGER REFERENCES cards(card_id)`, populated by matching
+   `tarot_mapping` to `cards.name`. The build hard-fails (`SystemExit`) if any row fails to match,
+   so a future edit to either source's naming can't silently produce an unlinked row.
+3. Adds a `constellation_tarot_detail` view (`constellations` JOIN `cards` JOIN `suits` LEFT JOIN
+   `seasons`/`elements`) so "what suit/element/season does Orion's card belong to" is one query
+   instead of a manual cross-reference between two files.
+
+Post-build assertions: exactly 88 constellations, exactly 78 cards, and every constellation linked
+(`tarot_card_id IS NOT NULL`) -- all three `raise SystemExit` on failure, mirroring
+`build_db.py`'s row-count guard (§2.2).
+
+`gothstronomy.db`/`gothstronomy_original.db` contribute nothing here (see README) and the game is
+untouched -- `db.js` still fetches `gothstronomy.db` directly, not the merged file.
+
 ## 3. The web app
 
 ### 3.1 Boot sequence (`main.js`)

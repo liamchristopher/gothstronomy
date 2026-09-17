@@ -12,6 +12,7 @@ const els = {
   livesVal: $("lives-val"),
   timerFill: $("timer-fill"),
   chainPopup: $("chain-popup"),
+  stageBanner: $("stage-banner"),
   titleScreen: $("title-screen"),
   startBtn: $("start-btn"),
   bestScore: $("best-score"),
@@ -45,6 +46,9 @@ const ui = {
   },
   updateTimer(frac) {
     els.timerFill.style.width = `${Math.max(0, Math.min(1, frac)) * 100}%`;
+  },
+  setStageBanner(text) {
+    els.stageBanner.textContent = text;
   },
   popChain(text) {
     els.chainPopup.textContent = text;

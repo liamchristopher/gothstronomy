@@ -110,14 +110,13 @@ html, body {
 }
 
 #stage-banner {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: 8px;
+  text-align: center;
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   color: var(--muted);
   text-transform: uppercase;
+  min-height: 1em;
 }
 
 /* ---------- Overlays ---------- */

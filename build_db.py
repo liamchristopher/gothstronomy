@@ -32,6 +32,13 @@ CREATE TABLE IF NOT EXISTS constellations (
 
 # Columns: name, goth_title, cardinality, happiness, season, colors,
 # tarot_mapping, astrological_mapping
+#
+# IMPORTANT if you add/edit a row: every `colors` value must exist in
+# web/js/theme.js's COLOR_MAP, and every `happiness` value must exist in
+# web/js/audio.js's MOOD_SCALES -- otherwise the game silently falls back to
+# a generic color/scale instead of using your new value. This is checked by
+# web/js/data-consistency.test.js; run `node --test web/js/*.test.js` after
+# editing this list.
 CONSTELLATIONS = [
     ("Andromeda", "The Chained Bride of Sorrow", 4, "Anguish", "Fall", "Bone White, Iron Grey", "The Hanged Man", "Venus"),
     ("Antlia", "The Bellows of the Drowned", 3, "Ennui", "Spring", "Ash Grey", "The Hermit", "Saturn"),

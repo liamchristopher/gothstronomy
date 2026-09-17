@@ -239,14 +239,31 @@ export class IndustrialAudioEngine {
     return buffer;
   }
 
+  // A fixed-frequency oscillator, unconnected and unstarted -- for voices
+  // whose pitch doesn't ramp (kick/snare's pitched bodies ramp and build
+  // their own oscillator directly instead).
+  _osc(type, freq) {
+    const osc = this.ctx.createOscillator();
+    osc.type = type;
+    osc.frequency.value = freq;
+    return osc;
+  }
+
+  // The gain envelope shape shared by most one-shot voices: hold at
+  // startValue, then exponentially decay to endValue over rampSeconds.
+  _expGain(time, startValue, endValue, rampSeconds) {
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(startValue, time);
+    gain.gain.exponentialRampToValueAtTime(endValue, time + rampSeconds);
+    return gain;
+  }
+
   _kick(time) {
     const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
     osc.type = "sine";
     osc.frequency.setValueAtTime(155, time);
     osc.frequency.exponentialRampToValueAtTime(38, time + 0.12);
-    gain.gain.setValueAtTime(0.95, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.26);
+    const gain = this._expGain(time, 0.95, 0.001, 0.26);
     osc.connect(gain).connect(this.dryBus);
     osc.start(time);
     osc.stop(time + 0.3);
@@ -257,9 +274,7 @@ export class IndustrialAudioEngine {
     const clickFilter = this.ctx.createBiquadFilter();
     clickFilter.type = "highpass";
     clickFilter.frequency.value = 3500;
-    const clickGain = this.ctx.createGain();
-    clickGain.gain.setValueAtTime(0.4, time);
-    clickGain.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+    const clickGain = this._expGain(time, 0.4, 0.001, 0.03);
     click.connect(clickFilter).connect(clickGain).connect(this.dryBus);
     click.start(time);
     click.stop(time + 0.03);
@@ -271,21 +286,17 @@ export class IndustrialAudioEngine {
     const filter = this.ctx.createBiquadFilter();
     filter.type = "highpass";
     filter.frequency.value = 1200;
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(0.75, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+    const gain = this._expGain(time, 0.75, 0.001, 0.16);
     noise.connect(filter).connect(gain).connect(this.dryBus);
     noise.start(time);
     noise.stop(time + 0.18);
 
     // a short pitched body under the noise, for an industrial "clang-snare"
     const osc = this.ctx.createOscillator();
-    const oscGain = this.ctx.createGain();
     osc.type = "square";
     osc.frequency.setValueAtTime(210, time);
     osc.frequency.exponentialRampToValueAtTime(120, time + 0.08);
-    oscGain.gain.setValueAtTime(0.18, time);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.09);
+    const oscGain = this._expGain(time, 0.18, 0.001, 0.09);
     osc.connect(oscGain).connect(this.dryBus);
     osc.start(time);
     osc.stop(time + 0.1);
@@ -298,18 +309,14 @@ export class IndustrialAudioEngine {
     const filter = this.ctx.createBiquadFilter();
     filter.type = "highpass";
     filter.frequency.value = 7500;
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(open ? 0.2 : 0.25, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + len);
+    const gain = this._expGain(time, open ? 0.2 : 0.25, 0.001, len);
     noise.connect(filter).connect(gain).connect(this.dryBus);
     noise.start(time);
     noise.stop(time + len + 0.01);
   }
 
   _clang(time) {
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(0.16, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+    const gain = this._expGain(time, 0.16, 0.001, 0.5);
     const filter = this.ctx.createBiquadFilter();
     filter.type = "bandpass";
     filter.frequency.value = 1800 + Math.random() * 1400;
@@ -319,9 +326,7 @@ export class IndustrialAudioEngine {
     gain.connect(this.reverbSend);
     // a small cluster of detuned square oscillators reads as metal, not tone
     [1, 1.48, 2.37].forEach((ratio) => {
-      const osc = this.ctx.createOscillator();
-      osc.type = "square";
-      osc.frequency.value = filter.frequency.value * ratio;
+      const osc = this._osc("square", filter.frequency.value * ratio);
       osc.connect(filter);
       osc.start(time);
       osc.stop(time + 0.5);
@@ -331,14 +336,10 @@ export class IndustrialAudioEngine {
   // ---- melodic layers -----------------------------------------------------
 
   _bass(time, freq) {
-    const osc = this.ctx.createOscillator();
+    const osc = this._osc("sawtooth", freq);
     const shaper = this.ctx.createWaveShaper();
     shaper.curve = this._distortionCurve(40);
-    const gain = this.ctx.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.32, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + this.stepDuration * 1.8);
+    const gain = this._expGain(time, 0.32, 0.001, this.stepDuration * 1.8);
     osc.connect(shaper).connect(gain);
     gain.connect(this.dryBus);
     gain.connect(this.reverbSend);
@@ -347,10 +348,8 @@ export class IndustrialAudioEngine {
   }
 
   _lead(time, freq) {
-    const osc = this.ctx.createOscillator();
+    const osc = this._osc("triangle", freq);
     const gain = this.ctx.createGain();
-    osc.type = "triangle";
-    osc.frequency.value = freq;
     gain.gain.setValueAtTime(0.001, time);
     gain.gain.linearRampToValueAtTime(0.14, time + 0.02);
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
@@ -365,14 +364,10 @@ export class IndustrialAudioEngine {
   stab(freq = 220) {
     if (!this.ctx) return;
     const time = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
+    const osc = this._osc("square", freq);
     const shaper = this.ctx.createWaveShaper();
     shaper.curve = this._distortionCurve(60);
-    const gain = this.ctx.createGain();
-    osc.type = "square";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.22, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+    const gain = this._expGain(time, 0.22, 0.001, 0.15);
     osc.connect(shaper).connect(gain);
     gain.connect(this.dryBus);
     gain.connect(this.reverbSend);

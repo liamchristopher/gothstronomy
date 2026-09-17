@@ -109,12 +109,12 @@ async function boot() {
 
   let stages;
   try {
-    stages = await loadConstellations("../gothstronomy.db");
+    stages = await loadConstellations("../gothstronomy_detailed.db");
     els.loadStatus.textContent = `${stages.length} skies charted.`;
   } catch (err) {
     console.error(err);
     els.loadStatus.textContent =
-      "Could not load gothstronomy.db. Serve this project over http:// (e.g. `python3 -m http.server` from the repo root) rather than opening the file directly.";
+      "Could not load gothstronomy_detailed.db. Serve this project over http:// (e.g. `python3 -m http.server` from the repo root) rather than opening the file directly.";
     els.startBtn.disabled = true;
     return;
   }

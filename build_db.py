@@ -124,7 +124,24 @@ CONSTELLATIONS = [
 ]
 
 
+def _validate_rows() -> None:
+    for row in CONSTELLATIONS:
+        name, _goth_title, cardinality, happiness, _season, colors, _tarot, _astro = row
+        if not (1 <= cardinality <= 30):
+            raise SystemExit(
+                f"{name}: cardinality {cardinality} is out of the expected range 1-30 "
+                "(the live data ranges 2-24; game.js's _spawnWave only clamps the "
+                "computed enemy count, not this raw value)"
+            )
+        if not happiness:
+            raise SystemExit(f"{name}: happiness is empty")
+        if not colors:
+            raise SystemExit(f"{name}: colors is empty")
+
+
 def build() -> None:
+    _validate_rows()
+
     if DB_PATH.exists():
         DB_PATH.unlink()
 

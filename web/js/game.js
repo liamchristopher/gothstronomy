@@ -1,4 +1,5 @@
 import { paletteFor } from "./theme.js";
+import { clamp, easeOutCubic, dist, difficultyFor, EXTEND_THRESHOLD, chainBonus } from "./difficulty.js";
 
 // ---- Tunables --------------------------------------------------------
 
@@ -13,16 +14,11 @@ const CHAIN_PROPAGATION_DELAY = 0.09; // s
 const CHAIN_GENERATION_SHRINK = 0.88;
 const CHAIN_MIN_MAX_R = 34;
 const CHAIN_FINALIZE_GRACE = 0.4; // s
-const EXTEND_THRESHOLD = 5;
 const EXTEND_BONUS_TIME = 3; // s
 const STAGE_BASE_DURATION = 18; // s
 const LIVES_START = 3;
 const INVULNERABLE_TIME = 1.1; // s
 const FADE_TIME = 0.35; // s, explosion ring fade after full growth
-
-function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-function dist(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
 
 export class Game {
   constructor({ canvas, stages, audio, ui, storage }) {
@@ -129,14 +125,7 @@ export class Game {
   // ---- difficulty -------------------------------------------------------
 
   _difficulty() {
-    const s = this.stageIndex;
-    const l = this.loopCount;
-    return {
-      speedMult: clamp(1 + s * 0.02 + l * 0.5, 1, 3.6),
-      countMult: clamp(1 + s * 0.035 + l * 0.8, 1, 4.5),
-      intervalMult: clamp(1 - s * 0.007 - l * 0.12, 0.32, 1),
-      scoreMult: 1 + s * 0.06 + l * 1.2,
-    };
+    return difficultyFor(this.stageIndex, this.loopCount);
   }
 
   // ---- flow -------------------------------------------------------------
@@ -346,7 +335,7 @@ export class Game {
 
   _finalizeChain(chain, diff) {
     if (chain.count <= 1) return;
-    const bonus = Math.round(chain.count * chain.count * 15 * diff.scoreMult);
+    const bonus = chainBonus(chain.count, diff.scoreMult);
     this.score += bonus;
     if (chain.count >= EXTEND_THRESHOLD) {
       this.stageTimeLeft = Math.min(this.stageTimeLeft + EXTEND_BONUS_TIME, this.stageDuration * 1.6);

@@ -60,6 +60,27 @@ See the module docstring in `build_db_detailed.py` for the full assignment metho
 before this file existed. Neither of these two files is wired into the game (`web/` still reads
 `gothstronomy.db`).
 
+### The merged database
+
+`gothstronomy_merged.db` unions everything else in this repo into one queryable file. It's built
+by `build_db_merged.py`, which:
+
+- copies `gothstronomy_detailed.db`'s `constellations` table (the richer of the two constellation
+  tables) in as-is,
+- copies the full Rider-Waite tarot schema (`suits`, `elements`, `seasons`, `cards`,
+  `description_terms`, `card_descriptions`, `keyword_terms`, `card_keywords`, `meaning_terms`,
+  `meaning_sets`, `meaning_set_items`, `card_images`) in from `rider_waite_3nf-lower.sqlite`
+  verbatim, images included, and
+- adds what neither source file could express on its own: `constellations.tarot_card_id`, a real
+  foreign key into `cards`, populated by matching `tarot_mapping` strings to `cards.name` (every
+  one of the 88 matches exactly), plus a `constellation_tarot_detail` view joining a constellation
+  straight through to its card's suit, element, and traditional season.
+
+`gothstronomy.db` and `gothstronomy_original.db` aren't part of the merge — `gothstronomy.db`'s
+constellation data is a strict subset of `gothstronomy_detailed.db`'s, and `_original` is a
+byte-for-byte backup of it. Rebuild the merged db with `python3 build_db_merged.py`; it's not wired
+into the game, which still reads `gothstronomy.db` directly.
+
 ### Tests
 
 ```

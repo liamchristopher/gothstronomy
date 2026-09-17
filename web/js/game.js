@@ -119,7 +119,7 @@ export class Game {
     }, { passive: false });
 
     window.addEventListener("keydown", (e) => {
-      if (e.code === "Space") {
+      if (e.code === "Space" && this.state === "playing") {
         e.preventDefault();
         this._tryDetonate();
       }
@@ -161,6 +161,7 @@ export class Game {
     this.particles = [];
     this.chains.clear();
     const row = this._currentStageRow();
+    this.ui.setStageBanner("");
     this.ui.showStageCard(row, this.stageIndex, this.loopCount);
     this.ui.updateHud({
       score: this.score,
@@ -180,6 +181,7 @@ export class Game {
     this.player.x = this.player.tx = this.arenaCx;
     this.player.y = this.player.ty = this.arenaCy;
     this.player.invulnUntil = 0;
+    this.ui.setStageBanner(`${row.name} — "${row.goth_title}"`);
 
     this.audio.setStage(row, this.stageIndex, this.loopCount);
   }
@@ -227,6 +229,7 @@ export class Game {
 
   _gameOver() {
     this.state = "gameover";
+    this.ui.setStageBanner("");
     this.audio.stop();
     const best = this.storage.recordRun(this.score, this.stageIndex + 1 + this.loopCount * this.stages.length);
     this.ui.showGameOver(this.score, this.stageIndex + 1 + this.loopCount * this.stages.length, best.isNewBest);

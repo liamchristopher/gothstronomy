@@ -227,6 +227,7 @@ html, body {
   display: flex;
   gap: 10px;
   justify-content: center;
+  max-width: 480px;
 }
 .card-row .k {
   color: var(--muted);
@@ -234,7 +235,13 @@ html, body {
   letter-spacing: 0.08em;
   font-size: 0.75rem;
   min-width: 80px;
+  flex-shrink: 0;
   text-align: right;
+}
+.card-row > span:last-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
 }
 
 /* ---------- Game over ---------- */

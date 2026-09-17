@@ -1,6 +1,6 @@
-// Loads the real gothstronomy.db (a standard, unmodified SQLite3 file) at
-// runtime via sql.js (SQLite compiled to WebAssembly) and queries it with
-// plain SQL. The .db file is the single source of truth for stage
+// Loads the real gothstronomy_detailed.db (a standard, unmodified SQLite3
+// file) at runtime via sql.js (SQLite compiled to WebAssembly) and queries
+// it with plain SQL. The .db file is the single source of truth for stage
 // content -- nothing here duplicates or converts it ahead of time.
 
 const SQLJS_JS = "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js";
@@ -30,7 +30,7 @@ function loadScriptOnce(src) {
  * table as plain JS objects, in id order (i.e. the canonical order the
  * database was built in).
  */
-export async function loadConstellations(dbUrl = "../gothstronomy.db") {
+export async function loadConstellations(dbUrl = "../gothstronomy_detailed.db") {
   if (typeof window.initSqlJs !== "function") {
     await loadScriptOnce(SQLJS_JS);
   }

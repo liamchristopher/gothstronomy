@@ -13,7 +13,7 @@ function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
 // stage's attitude -- tense/dissonant moods lean on b2/tritone intervals,
 // heavier grief moods sit in natural minor, prouder moods (Vanity) get a
 // major 6/maj7 flavor. Covers every mood value present in gothstronomy.db.
-const MOOD_SCALES = {
+export const MOOD_SCALES = {
   Wrath: [0, 1, 4, 6, 7],
   Despair: [0, 2, 3, 7, 8],
   Dread: [0, 1, 3, 6, 7],

@@ -181,8 +181,7 @@ export class Game {
     this.player.y = this.player.ty = this.arenaCy;
     this.player.invulnUntil = 0;
 
-    const bpm = clamp(126 + this.stageIndex * 1.4 + this.loopCount * 20, 126, 200);
-    this.audio.start(bpm);
+    this.audio.setStage(row, this.stageIndex, this.loopCount);
   }
 
   _tryDetonate() {
@@ -192,6 +191,7 @@ export class Game {
     this.detonateReadyAt = now + DETONATION_COOLDOWN;
     this._spawnExplosion(this.player.x, this.player.y, DETONATION_BASE_MAX_R * (this.arenaR / 260 + 0.4), 0, ++this.chainCounter);
     this.audio.stab(220);
+    this.audio.pulseEnergy(0.35);
   }
 
   _spawnExplosion(x, y, maxR, generation, chainId) {
@@ -308,6 +308,7 @@ export class Game {
             ex.chainId
           );
           this.audio.stab(220 + ex.generation * 30);
+          this.audio.pulseEnergy(0.12 + ex.generation * 0.04);
         }
       }
 
@@ -348,8 +349,10 @@ export class Game {
       this.stageTimeLeft = Math.min(this.stageTimeLeft + EXTEND_BONUS_TIME, this.stageDuration * 1.6);
       this.ui.popChain(`EXTEND +${EXTEND_BONUS_TIME}s`);
       this.audio.riser(0.4);
+      this.audio.pulseEnergy(0.6);
     } else {
       this.ui.popChain(`CHAIN x${chain.count}`);
+      this.audio.pulseEnergy(clamp(chain.count * 0.08, 0, 0.5));
     }
   }
 

@@ -81,6 +81,16 @@ constellation data is a strict subset of `gothstronomy_detailed.db`'s, and `_ori
 byte-for-byte backup of it. Rebuild the merged db with `python3 build_db_merged.py`; it's not wired
 into the game, which still reads `gothstronomy.db` directly.
 
+### An insight from the merge
+
+Joining the two halves of `gothstronomy_merged.db` surfaces something neither source file could
+show on its own: a constellation's real sky-visibility season and its tarot card's traditional
+season disagree for **every single one** of the 63 constellations whose card comes from a Minor
+Arcana suit (0/63 match, a clean fixed one-season rotation) — because the two files independently
+anchor the classical element→season correspondence a quarter-turn apart. See
+[`docs/insight-seasonal-correspondence-drift.md`](docs/insight-seasonal-correspondence-drift.md);
+reproduce the numbers with `python3 scripts/seasonal_correspondence_report.py`.
+
 ### Tests
 
 ```

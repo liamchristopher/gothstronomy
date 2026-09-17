@@ -45,8 +45,12 @@ Then visit `http://localhost:8000/web/`.
 ### Tests
 
 ```
-node --test web/js/*.test.js
+find web/js -name '*.test.js' -print0 | xargs -0 node --test
 ```
+
+(`find`-based rather than a shell glob so it keeps working if a test file ever moves into a
+subdirectory -- neither a plain `web/js/*.test.js` glob nor `node --test web/js` catch that on
+their own.)
 
 Covers the color/mood lookup tables in `theme.js` and `audio.js`, including a check that every `colors` and
 `happiness` value actually present in `gothstronomy.db` has a corresponding entry -- so adding new

@@ -55,6 +55,7 @@ const HAT_PATTERN = [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1];
 export class IndustrialAudioEngine {
   constructor() {
     this.ctx = null;
+    this.unsupported = false;
     this.muted = true;
     this.bpm = 132;
     this.stepDuration = 0;
@@ -80,7 +81,14 @@ export class IndustrialAudioEngine {
       if (this.ctx.state === "suspended") this.ctx.resume();
       return;
     }
+    if (this.unsupported) return;
     const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) {
+      // No Web Audio support in this browser -- the game stays fully
+      // playable, just silent, instead of throwing here.
+      this.unsupported = true;
+      return;
+    }
     this.ctx = new Ctx();
 
     this.masterFilter = this.ctx.createBiquadFilter();
@@ -156,6 +164,7 @@ export class IndustrialAudioEngine {
 
   start(bpm = 132) {
     this.ensureContext();
+    if (!this.ctx) return;
     this.setBpm(bpm);
     this.stepIndex = 0;
     this.absoluteStep = 0;

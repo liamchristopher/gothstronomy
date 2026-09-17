@@ -245,7 +245,7 @@ export class Game {
     this.ui.setStageBanner("");
     this.audio.stop();
     const best = this.storage.recordRun(this.score, this.absoluteStage);
-    this.ui.showGameOver(this.score, this.absoluteStage, best.isNewBest);
+    this.ui.showGameOver(this.score, this.absoluteStage, best.isNewBestScore, best.isNewBestStage);
   }
 
   // ---- main loop ----------------------------------------------------------

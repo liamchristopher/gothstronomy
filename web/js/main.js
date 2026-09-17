@@ -31,6 +31,7 @@ const els = {
   finalScore: $("final-score"),
   finalStage: $("final-stage"),
   newBest: $("new-best"),
+  newBestStage: $("new-best-stage"),
   restartBtn: $("restart-btn"),
   muteBtn: $("mute-btn"),
   fatalError: $("fatal-error"),
@@ -72,10 +73,11 @@ const ui = {
   hideStageCard() {
     els.stageCard.classList.add("hidden");
   },
-  showGameOver(score, stage, isNewBest) {
+  showGameOver(score, stage, isNewBestScore, isNewBestStage) {
     els.finalScore.textContent = `Score: ${score.toLocaleString()}`;
     els.finalStage.textContent = `Reached stage ${stage}`;
-    els.newBest.classList.toggle("hidden", !isNewBest);
+    els.newBest.classList.toggle("hidden", !isNewBestScore);
+    els.newBestStage.classList.toggle("hidden", !isNewBestStage);
     els.gameOver.classList.remove("hidden");
   },
   hideGameOver() {

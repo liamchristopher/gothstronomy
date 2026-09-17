@@ -21,17 +21,21 @@ export class Storage {
   get bestStage() { return this.best.stage; }
 
   recordRun(score, stage) {
-    let isNewBest = false;
+    let isNewBestScore = false;
+    let isNewBestStage = false;
     if (score > this.best.score) {
       this.best.score = score;
-      isNewBest = true;
+      isNewBestScore = true;
     }
-    if (stage > this.best.stage) this.best.stage = stage;
+    if (stage > this.best.stage) {
+      this.best.stage = stage;
+      isNewBestStage = true;
+    }
     try {
       localStorage.setItem(KEY, JSON.stringify(this.best));
     } catch {
       // ignore write failures (private mode, quota, etc.)
     }
-    return { isNewBest, best: this.best };
+    return { isNewBestScore, isNewBestStage, best: this.best };
   }
 }

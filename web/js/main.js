@@ -33,6 +33,8 @@ const els = {
   newBest: $("new-best"),
   restartBtn: $("restart-btn"),
   muteBtn: $("mute-btn"),
+  fatalError: $("fatal-error"),
+  fatalErrorMessage: $("fatal-error-message"),
 };
 
 const audio = new IndustrialAudioEngine();
@@ -78,6 +80,10 @@ const ui = {
   },
   hideGameOver() {
     els.gameOver.classList.add("hidden");
+  },
+  showFatalError(message) {
+    els.fatalErrorMessage.textContent = message;
+    els.fatalError.classList.remove("hidden");
   },
 };
 

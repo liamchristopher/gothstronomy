@@ -251,10 +251,20 @@ export class Game {
   // ---- main loop ----------------------------------------------------------
 
   _loop(ts) {
-    const dt = this.lastTs ? Math.min((ts - this.lastTs) / 1000, 0.05) : 0;
-    this.lastTs = ts;
-    if (this.state === "playing") this._update(dt);
-    this._render(dt);
+    try {
+      const dt = this.lastTs ? Math.min((ts - this.lastTs) / 1000, 0.05) : 0;
+      this.lastTs = ts;
+      if (this.state === "playing") this._update(dt);
+      this._render(dt);
+    } catch (err) {
+      // An uncaught exception here would otherwise silently kill the rAF
+      // chain, freezing the page on the last-drawn frame with no feedback
+      // beyond a console error. Surface it and stop instead of continuing
+      // to reschedule a loop that's already broken.
+      console.error(err);
+      this.ui.showFatalError(err && err.message ? err.message : String(err));
+      return;
+    }
     requestAnimationFrame(this._boundLoop);
   }
 

@@ -42,6 +42,24 @@ Then visit `http://localhost:8000/web/`.
 
 **Controls:** move with the mouse/touch, detonate with a click/tap or the spacebar.
 
+### The detailed database
+
+`gothstronomy_detailed.db` is a separate, richer database, built by `build_db_detailed.py`. It shares
+`gothstronomy.db`'s schema and its `name`/`goth_title`/`cardinality`/`happiness`/`season`/`colors` data
+exactly (imported straight from `build_db.py`, so the two never drift), but replaces the other two
+columns:
+
+- `tarot_mapping` uses the full 78-card deck (all 22 Major Arcana, each exactly once, plus court cards
+  and pips from all four Minor Arcana suits) instead of the original's 20-card, heavily-repeated subset.
+- `astrological_mapping` expands each row's original planet/sign choice (unchanged) into real classical
+  astrological detail: element and modality for the zodiac signs, and the ruling planet's classical day,
+  metal, and temperament for every row.
+
+See the module docstring in `build_db_detailed.py` for the full assignment methodology. Rebuild with
+`python3 build_db_detailed.py`. `gothstronomy_original.db` is a plain backup of `gothstronomy.db` taken
+before this file existed. Neither of these two files is wired into the game (`web/` still reads
+`gothstronomy.db`).
+
 ### Tests
 
 ```

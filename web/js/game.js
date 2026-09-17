@@ -154,6 +154,10 @@ export class Game {
     return this.stages[this.stageIndex % this.stages.length];
   }
 
+  get absoluteStage() {
+    return this.stageIndex + 1 + this.loopCount * this.stages.length;
+  }
+
   _goToStageIntro() {
     this.state = "intro";
     this.enemies = [];
@@ -166,7 +170,7 @@ export class Game {
     this.ui.updateHud({
       score: this.score,
       lives: this.lives,
-      stage: this.stageIndex + 1 + this.loopCount * this.stages.length,
+      stage: this.absoluteStage,
     });
   }
 
@@ -211,7 +215,7 @@ export class Game {
     this.lives -= 1;
     this.shake = 0.35;
     this.player.invulnUntil = performance.now() / 1000 + INVULNERABLE_TIME;
-    this.ui.updateHud({ score: this.score, lives: this.lives, stage: this.stageIndex + 1 + this.loopCount * this.stages.length });
+    this.ui.updateHud({ score: this.score, lives: this.lives, stage: this.absoluteStage });
     if (this.lives <= 0) {
       this._gameOver();
     }
@@ -231,8 +235,8 @@ export class Game {
     this.state = "gameover";
     this.ui.setStageBanner("");
     this.audio.stop();
-    const best = this.storage.recordRun(this.score, this.stageIndex + 1 + this.loopCount * this.stages.length);
-    this.ui.showGameOver(this.score, this.stageIndex + 1 + this.loopCount * this.stages.length, best.isNewBest);
+    const best = this.storage.recordRun(this.score, this.absoluteStage);
+    this.ui.showGameOver(this.score, this.absoluteStage, best.isNewBest);
   }
 
   // ---- main loop ----------------------------------------------------------
@@ -341,7 +345,7 @@ export class Game {
 
     if (this.shake > 0) this.shake = Math.max(0, this.shake - dt * 1.5);
 
-    this.ui.updateHud({ score: this.score, lives: this.lives, stage: this.stageIndex + 1 + this.loopCount * this.stages.length });
+    this.ui.updateHud({ score: this.score, lives: this.lives, stage: this.absoluteStage });
   }
 
   _finalizeChain(chain, diff) {

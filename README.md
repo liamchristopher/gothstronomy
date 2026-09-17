@@ -42,3 +42,14 @@ Then visit `http://localhost:8000/web/`.
 
 **Controls:** move with the mouse/touch, detonate with a click/tap or the spacebar.
 
+### Tests
+
+```
+node --test web/js/*.test.js
+```
+
+Covers the color/mood lookup tables in `theme.js` and `audio.js`, including a check that every `colors` and
+`happiness` value actually present in `gothstronomy.db` has a corresponding entry -- so adding new
+constellation data that the game can't render/score correctly fails the test suite instead of silently
+falling back. Requires Node 22+ for the built-in `node:sqlite` module.
+

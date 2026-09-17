@@ -519,6 +519,9 @@ export class Game {
 
   _withAlpha(hex, alpha) {
     const h = hex.replace("#", "");
+    if (!/^[0-9a-fA-F]{6}$/.test(h)) {
+      throw new Error(`_withAlpha: expected a 6-digit hex color, got "${hex}"`);
+    }
     const r = parseInt(h.substring(0, 2), 16);
     const g = parseInt(h.substring(2, 4), 16);
     const b = parseInt(h.substring(4, 6), 16);

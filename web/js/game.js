@@ -34,6 +34,7 @@ export class Game {
     this.storage = storage;
 
     this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     this.arenaCx = 0;
     this.arenaCy = 0;
     this.arenaR = 0;
@@ -209,7 +210,7 @@ export class Game {
 
   _loseLife() {
     this.lives -= 1;
-    this.shake = 0.35;
+    this.shake = this.reducedMotion ? 0 : 0.35;
     this.player.invulnUntil = performance.now() / 1000 + INVULNERABLE_TIME;
     this.ui.updateHud({ score: this.score, lives: this.lives, stage: this.stageIndex + 1 + this.loopCount * this.stages.length });
     if (this.lives <= 0) {
@@ -487,7 +488,7 @@ export class Game {
     const invuln = (performance.now() / 1000) < this.player.invulnUntil;
     ctx.save();
     ctx.translate(this.player.x, this.player.y);
-    ctx.globalAlpha = invuln ? 0.5 + 0.5 * Math.sin(t * 20) : 1;
+    ctx.globalAlpha = invuln ? (this.reducedMotion ? 0.55 : 0.5 + 0.5 * Math.sin(t * 20)) : 1;
     ctx.beginPath();
     ctx.arc(0, 0, PLAYER_VISUAL_R, 0, Math.PI * 2);
     ctx.fillStyle = "#f2eef5";

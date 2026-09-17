@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>GOTHSTRONOMY // Extend the Void</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%A0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<meta name="description" content="An escalating, industrial-scored survival game built on 88 goth-reimagined constellations." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="arena"></canvas>
+
+    <div id="hud">
+      <div id="hud-top">
+        <div class="hud-chip">SCORE <span id="score-val">0</span></div>
+        <div class="hud-chip">STAGE <span id="stage-val">0</span> / <span id="stage-total">88</span></div>
+        <div class="hud-chip" id="lives-chip">LIVES <span id="lives-val">●●●</span></div>
+      </div>
+      <div id="timer-track"><div id="timer-fill"></div></div>
+      <div id="chain-popup" aria-live="polite"></div>
+      <div id="stage-banner"></div>
+    </div>
+
+    <section id="title-screen" class="overlay">
+      <h1 class="fx-title">GOTHSTRONOMY</h1>
+      <p class="subtitle">extend the void, one constellation at a time</p>
+      <p class="blurb">88 dead skies, cycling forever. Every detonation you land makes the next wave worse.
+        An industrial pulse rises with you. Survive the chain, or don't.</p>
+      <button id="start-btn" class="btn-primary">BEGIN THE DESCENT</button>
+      <p class="best">Best score: <span id="best-score">0</span> &nbsp;·&nbsp; Deepest stage: <span id="best-stage">0</span></p>
+      <p class="controls">Move: mouse / drag &nbsp;·&nbsp; Detonate: click / tap / space</p>
+      <p id="load-status" class="load-status">Loading star charts&hellip;</p>
+    </section>
+
+    <section id="stage-card" class="overlay hidden">
+      <div class="card-season" id="card-season"></div>
+      <h2 id="card-name"></h2>
+      <h3 id="card-title"></h3>
+      <div class="card-rows">
+        <p class="card-row"><span class="k">Mood</span><span id="card-happiness"></span></p>
+        <p class="card-row"><span class="k">Tarot</span><span id="card-tarot"></span></p>
+        <p class="card-row"><span class="k">Ruled by</span><span id="card-astro"></span></p>
+        <p class="card-row"><span class="k">Stars</span><span id="card-cardinality"></span></p>
+      </div>
+      <button id="stage-begin-btn" class="btn-primary">DETONATE THIS SKY</button>
+    </section>
+
+    <section id="game-over" class="overlay hidden">
+      <h1 class="fx-title">THE SKY WINS</h1>
+      <p id="final-score" class="final-line"></p>
+      <p id="final-stage" class="final-line"></p>
+      <p id="new-best" class="new-best hidden">NEW BEST</p>
+      <button id="restart-btn" class="btn-primary">AGAIN</button>
+    </section>
+
+    <button id="mute-btn" title="Toggle sound" aria-label="Toggle sound">🔇</button>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+:root {
+  --bg: #050508;
+  --ink: #e8e6ec;
+  --muted: #9a96a8;
+  --accent: #a4102a;
+  --panel: rgba(10, 9, 16, 0.86);
+  --line: rgba(232, 230, 236, 0.14);
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Oswald', 'Segoe UI', sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+}
+
+#arena {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+  background: radial-gradient(circle at 50% 45%, #0d0c14 0%, #050508 70%);
+}
+
+/* ---------- HUD ---------- */
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding: max(12px, env(safe-area-inset-top)) 16px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+#hud-top {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.hud-chip {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 3px;
+  color: var(--muted);
+}
+.hud-chip span { color: var(--ink); margin-left: 6px; }
+
+#timer-track {
+  margin-top: 10px;
+  height: 6px;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--line);
+}
+#timer-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent), #ff4f6d);
+  transition: width 0.08s linear;
+}
+
+#chain-popup {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Metal Mania', cursive;
+  font-size: 2.2rem;
+  color: #ff4f6d;
+  text-shadow: 0 0 18px rgba(255, 79, 109, 0.85), 0 0 4px #000;
+  opacity: 0;
+  pointer-events: none;
+}
+#chain-popup.show {
+  animation: chain-pop 0.7s ease-out forwards;
+}
+@keyframes chain-pop {
+  0%   { opacity: 0; transform: translate(-50%, -40%) scale(0.7); }
+  20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+}
+
+#stage-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ---------- Overlays ---------- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 40%, rgba(30,10,20,0.6), rgba(2,2,4,0.94));
+  backdrop-filter: blur(2px);
+}
+.overlay.hidden { display: none; }
+
+.fx-title {
+  font-family: 'Metal Mania', cursive;
+  font-size: clamp(2.6rem, 9vw, 4.6rem);
+  margin: 0;
+  color: #f2eef5;
+  text-shadow: 0 0 26px rgba(164, 16, 42, 0.75), 0 0 4px #000;
+  letter-spacing: 0.03em;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+.blurb {
+  max-width: 480px;
+  color: #c9c5d4;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 6px 0 4px;
+}
+
+.btn-primary {
+  margin-top: 10px;
+  background: linear-gradient(180deg, #7c0f27, #4a0817);
+  color: #f5eef0;
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 14px 30px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  border-radius: 3px;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 0 22px rgba(164, 16, 42, 0.55);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(255, 79, 109, 0.7); }
+.btn-primary:active { transform: translateY(1px); }
+
+.best, .controls {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 2px 0;
+}
+.controls { opacity: 0.75; }
+
+.load-status {
+  color: #6f6b7c;
+  font-size: 0.8rem;
+  min-height: 1em;
+}
+
+/* ---------- Stage card ---------- */
+
+.card-season {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+#card-name {
+  font-family: 'Metal Mania', cursive;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  margin: 0;
+  color: #f2eef5;
+}
+#card-title {
+  margin: 0 0 8px;
+  font-weight: 400;
+  font-style: italic;
+  color: #d8b7c0;
+  font-size: 1.05rem;
+  max-width: 520px;
+}
+.card-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.card-row {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #c9c5d4;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.card-row .k {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* ---------- Game over ---------- */
+
+.final-line { margin: 2px 0; color: #d8d4e0; font-size: 1.05rem; }
+.new-best {
+  color: #ffd75e;
+  font-family: 'Metal Mania', cursive;
+  letter-spacing: 0.08em;
+  margin: 4px 0;
+}
+.new-best.hidden { display: none; }
+
+/* ---------- Mute ---------- */
+
+#mute-btn {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 5;
+}
+
+@media (max-width: 480px) {
+  .card-row { flex-direction: column; gap: 0; }
+  .card-row .k { text-align: center; min-width: 0; }
+}
